@@ -1,6 +1,5 @@
 package com.mnemoc;
 
-import com.mnemoc.Controller.CreateDeckController;
 import com.mnemoc.Controller.MainController;
 import com.mnemoc.Models.DataModel;
 import javafx.application.Application;
@@ -19,17 +18,11 @@ public class Main extends Application {
         MainController mainController = new MainController();
         FXMLLoader mainLoader = new FXMLLoader(Main.class.getResource("main_view.fxml"));
         mainLoader.setController(mainController);
-        AnchorPane root = (AnchorPane) mainLoader.load();
-
-        CreateDeckController newDeckController = new CreateDeckController();
-        FXMLLoader newDeckLoader = new FXMLLoader(Main.class.getResource("create_deck.fxml"));
-        newDeckLoader.setController(newDeckController);
-        AnchorPane newDeckPane = (AnchorPane) newDeckLoader.load();
+        AnchorPane root = mainLoader.load();
 
         DataModel model = new DataModel();
         model.loadData();
         mainController.initModel(model);
-        newDeckController.initModel(model);
 
         Scene scene = new Scene(root);
         stage.setTitle("Mnemoc");

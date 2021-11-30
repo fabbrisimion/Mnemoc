@@ -1,19 +1,24 @@
 package com.mnemoc.Controller;
 
+import com.mnemoc.Main;
 import com.mnemoc.Models.DataModel;
 import com.mnemoc.Models.Deck;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-public class MainController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class MainController implements Initializable {
 
     @FXML
     private CreateDeckController createDeckController;
@@ -23,17 +28,22 @@ public class MainController {
     @FXML
     ListView<Deck> deckList;
 
+    @FXML
+    Button createDeck;
+
     private ObservableList<Deck> items = FXCollections.observableArrayList();
 
     @FXML
-    public void createDeckDialog(ActionEvent e) {
+    public void createDeckDialog() {
         try {
-            FXMLLoader loader = new FXMLLoader(MainController.class.getResource("/com/mnemoc/create_deck.fxml"));
-            Parent root = (Parent) loader.load();
-            createDeckController = loader.getController();
+            CreateDeckController newDeckController = new CreateDeckController();
+            FXMLLoader newDeckLoader = new FXMLLoader(Main.class.getResource("create_deck.fxml"));
+            newDeckLoader.setController(newDeckController);
+            AnchorPane newDeckPane = newDeckLoader.load();
+            newDeckController.initModel(dataModel);
 
             Stage stage = new Stage();
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(newDeckPane);
             stage.setScene(scene);
             stage.show();
         } catch (Exception ex){
@@ -59,7 +69,7 @@ public class MainController {
             }
         });
 
-        deckList.setCellFactory(lv -> new ListCell<Deck>() {
+        deckList.setCellFactory(lv -> new ListCell<>() {
             @Override
             public void updateItem(Deck deck, boolean empty) {
                 super.updateItem(deck, empty);
@@ -70,5 +80,14 @@ public class MainController {
                 }
             }
         });
+    }
+
+    public void setModel(CreateDeckController controller){
+        createDeckController = controller;
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        createDeck.setOnAction(event -> this.createDeckDialog());
     }
 }

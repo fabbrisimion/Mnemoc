@@ -4,9 +4,10 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="121.0" prefWidth="381.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <TextField fx:id="deckName" layoutX="29.0" layoutY="29.0" prefHeight="25.0" prefWidth="323.0" promptText="Deck name" />
-      <Button fx:id="ok" layoutX="301.0" layoutY="72.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="51.0" text="Ok" />
-   </children>
+<AnchorPane prefHeight="121.0" prefWidth="381.0" xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1">
+   <TextField fx:id="deckName" layoutX="29.0" layoutY="29.0" prefHeight="25.0" prefWidth="323.0"
+              promptText="Deck name"/>
+   <Button fx:id="ok" layoutX="301.0" layoutY="72.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="51.0"
+           text="Ok"/>
 </AnchorPane>

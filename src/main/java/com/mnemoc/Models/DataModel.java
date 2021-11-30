@@ -21,11 +21,12 @@ public class DataModel {
 
     public ObservableList<Deck> getDeckList() { return deckList; }
 
+    public final void addToDeckList(String s) {
+        deckList.add(new Deck(s));
+    }
+
     public void loadData(){
-        deckList.setAll(
-                new Deck("German words"),
-                new Deck("Geography capitals")
-        );
+        addToDeckList("hello");
     }
 
     public void saveData(){}
