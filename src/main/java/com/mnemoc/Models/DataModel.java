@@ -1,5 +1,6 @@
 package com.mnemoc.Models;
 
+import com.mnemoc.Utils.Database;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -7,6 +8,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class DataModel {
+
+    private Database db;
 
     private final ObservableList<Deck> deckList = FXCollections.observableArrayList(deck ->
         new Observable[] {deck.nameProperty()});
@@ -25,9 +28,16 @@ public class DataModel {
         deckList.add(new Deck(s));
     }
 
+    public DataModel(){
+        db = new Database();
+    }
+
     public void loadData(){
         addToDeckList("hello");
     }
 
-    public void saveData(){}
+    public void saveData(){
+
+    }
+
 }
