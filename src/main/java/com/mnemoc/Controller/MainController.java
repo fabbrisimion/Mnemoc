@@ -20,27 +20,43 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
 
-    @FXML
+    private StudyDeckController studyDeckController;
+    private AddCardsController addCardsController;
     private CreateDeckController createDeckController;
-
+    private ObservableList<Deck> items = FXCollections.observableArrayList();
     private DataModel dataModel;
 
     @FXML
     ListView<Deck> deckList;
 
     @FXML
-    Button createDeck;
-
-    private ObservableList<Deck> items = FXCollections.observableArrayList();
+    Button addCards;
 
     @FXML
-    public void createDeckDialog() {
+    Button studyDeck;
+
+    @FXML
+    Button deleteDeck;
+
+    //@FXML
+    //Button settings;
+
+    @FXML
+    Button createDeck;
+
+    public MainController(DataModel model){
+        dataModel = model;
+        addCardsController = new AddCardsController(model);
+        createDeckController = new CreateDeckController(model);
+        studyDeckController = new StudyDeckController(model);
+    }
+
+    @FXML
+    public void createDeckWindow() {
         try {
-            CreateDeckController newDeckController = new CreateDeckController();
             FXMLLoader newDeckLoader = new FXMLLoader(Main.class.getResource("create_deck.fxml"));
-            newDeckLoader.setController(newDeckController);
+            newDeckLoader.setController(createDeckController);
             AnchorPane newDeckPane = newDeckLoader.load();
-            newDeckController.initModel(dataModel);
 
             Stage stage = new Stage();
             Scene scene = new Scene(newDeckPane);
@@ -51,17 +67,51 @@ public class MainController implements Initializable {
         }
     }
 
-    public void initModel(DataModel model){
-        if (this.dataModel != null)
-            throw new IllegalStateException("Model can only be initialized once");
+    public void addCardsWindow(){
+        try {
+            FXMLLoader addCardsLoader = new FXMLLoader(Main.class.getResource("add_cards.fxml"));
+            addCardsLoader.setController(addCardsController);
+            AnchorPane addCardsPane = addCardsLoader.load();
 
-        this.dataModel = model;
-        deckList.setItems(model.getDeckList());
+            Stage stage = new Stage();
+            Scene scene = new Scene(addCardsPane);
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    public void studyDeckWindow(){
+        try {
+            FXMLLoader newDeckLoader = new FXMLLoader(Main.class.getResource("study_deck.fxml"));
+            newDeckLoader.setController(studyDeckController);
+            AnchorPane newDeckPane = newDeckLoader.load();
+
+            Stage stage = new Stage();
+            Scene scene = new Scene(newDeckPane);
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    public void deleteSelectedDeck(){
+        Deck delDeck = dataModel.getCurrentDeck();
+    }
+
+    //public void settingsWindow(){}
+
+    public void initModel(){
+
+        //Passes the dataModel Observable list to the ListView
+        deckList.setItems(dataModel.getDeckList());
 
         deckList.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) ->
-                model.setCurrentDeck(newSelection));
+                dataModel.setCurrentDeck(newSelection));
 
-        model.currentDeckProperty().addListener((obs, oldDeck, newDeck) -> {
+        dataModel.currentDeckProperty().addListener((obs, oldDeck, newDeck) -> {
             if (newDeck == null) {
                 deckList.getSelectionModel().clearSelection();
             } else {
@@ -82,12 +132,12 @@ public class MainController implements Initializable {
         });
     }
 
-    public void setModel(CreateDeckController controller){
-        createDeckController = controller;
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        createDeck.setOnAction(event -> this.createDeckDialog());
+        createDeck.setOnAction(event -> createDeckWindow());
+        addCards.setOnAction(event -> addCardsWindow());
+        studyDeck.setOnAction(event -> studyDeckWindow());
+        deleteDeck.setOnAction(event -> deleteSelectedDeck());
+        //settings.setOnAction(event -> settingsWindow());
     }
 }

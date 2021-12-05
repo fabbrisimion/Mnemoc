@@ -3,8 +3,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
-            prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1">
-   <Button fx:id="createDeck" layoutX="476.0" layoutY="344.0" mnemonicParsing="false" text="Create deck"/>
-   <ListView fx:id="deckList" layoutX="53.0" layoutY="39.0" prefHeight="322.0" prefWidth="200.0"/>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1">
+   <Button fx:id="createDeck" layoutX="464.0" layoutY="344.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="91.0" text="Create deck" />
+   <ListView fx:id="deckList" layoutX="53.0" layoutY="39.0" prefHeight="322.0" prefWidth="318.0" />
+   <Button fx:id="addCards" layoutX="464.0" layoutY="39.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="91.0" text="Add cards" />
+   <Button fx:id="studyDeck" layoutX="464.0" layoutY="81.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="91.0" text="Study deck" />
+   <Button fx:id="deleteDeck" layoutX="464.0" layoutY="125.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="91.0" text="Remove deck" />
+   <Button fx:id="settings" layoutX="464.0" layoutY="169.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="91.0" text="Settings" visible="false" />
 </AnchorPane>

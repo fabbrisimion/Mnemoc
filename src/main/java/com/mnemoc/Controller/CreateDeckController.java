@@ -1,7 +1,7 @@
 package com.mnemoc.Controller;
 
 import com.mnemoc.Models.DataModel;
-import javafx.event.ActionEvent;
+import com.mnemoc.Models.Deck;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -15,31 +15,34 @@ public class CreateDeckController implements Initializable {
 
     private DataModel model;
 
-    private MainController controller;
-
-    private String text;
-
     @FXML
     private Button ok;
     
     @FXML
     TextField deckName;
 
-    @FXML
+    public CreateDeckController(DataModel model){
+        this.model = model;
+    }
+
     public void createDeck() {
         try {
-            text = deckName.getText();
-            if(!text.equals(""))
-                model.addToDeckList(text);
+            Deck dk = new Deck();
+            dk.setDid(System.currentTimeMillis());
+            dk.setName(deckName.getText());
+            System.out.println(dk.getDid());
+            if(!dk.getName().equals(""))
+                model.addDeck(dk);
             closeStage();
         } catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    private void verifyDeckNameExistence(ActionEvent e) {}
+    private boolean duplicateDeck(Deck dk) {
+        return true;
+    }
 
-    @FXML
     public void closeStage(){
         Stage stage = (Stage) ok.getScene().getWindow();
         stage.close();

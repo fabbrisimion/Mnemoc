@@ -11,8 +11,12 @@ public class DataModel {
 
     private Database db;
 
+    //Deck table
     private final ObservableList<Deck> deckList = FXCollections.observableArrayList(deck ->
         new Observable[] {deck.nameProperty()});
+
+    private final ObservableList<Card> cards = FXCollections.observableArrayList(card ->
+            new Observable[] {card.frontProperty()});
 
     private final ObjectProperty<Deck> currentDeck = new SimpleObjectProperty<>(null);
 
@@ -24,8 +28,9 @@ public class DataModel {
 
     public ObservableList<Deck> getDeckList() { return deckList; }
 
-    public final void addToDeckList(String s) {
-        deckList.add(new Deck(s));
+    public final void addDeck(Deck dk) {
+        deckList.add(dk);
+        db.insertDeck(dk);
     }
 
     public DataModel(){
@@ -33,7 +38,7 @@ public class DataModel {
     }
 
     public void loadData(){
-        addToDeckList("hello");
+        db.getDecks(deckList);
     }
 
     public void saveData(){
