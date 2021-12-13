@@ -15,7 +15,7 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
 
         DataModel model = new DataModel();
-        model.loadData();
+        model.loadDecks();
 
         //Loading main_view stage and associated MainController
         MainController mainController = new MainController(model);
@@ -23,8 +23,6 @@ public class Main extends Application {
         mainLoader.setController(mainController);
         AnchorPane root = mainLoader.load();
 
-        //Initialize list view
-        mainController.initModel();
 
         Scene scene = new Scene(root);
         stage.setTitle("Mnemoc");

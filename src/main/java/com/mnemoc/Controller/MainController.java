@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -24,7 +25,7 @@ public class MainController implements Initializable {
     private AddCardsController addCardsController;
     private CreateDeckController createDeckController;
     private ObservableList<Deck> items = FXCollections.observableArrayList();
-    private DataModel dataModel;
+    private DataModel model;
 
     @FXML
     ListView<Deck> deckList;
@@ -38,14 +39,11 @@ public class MainController implements Initializable {
     @FXML
     Button deleteDeck;
 
-    //@FXML
-    //Button settings;
-
     @FXML
     Button createDeck;
 
     public MainController(DataModel model){
-        dataModel = model;
+        this.model = model;
         addCardsController = new AddCardsController(model);
         createDeckController = new CreateDeckController(model);
         studyDeckController = new StudyDeckController(model);
@@ -84,34 +82,33 @@ public class MainController implements Initializable {
 
     public void studyDeckWindow(){
         try {
-            FXMLLoader newDeckLoader = new FXMLLoader(Main.class.getResource("study_deck.fxml"));
-            newDeckLoader.setController(studyDeckController);
-            AnchorPane newDeckPane = newDeckLoader.load();
+            FXMLLoader studyDeckLoader = new FXMLLoader(Main.class.getResource("study_deck.fxml"));
+            studyDeckLoader.setController(studyDeckController);
+            AnchorPane newDeckPane = studyDeckLoader.load();
 
             Stage stage = new Stage();
             Scene scene = new Scene(newDeckPane);
             stage.setScene(scene);
             stage.show();
-        } catch (Exception ex){
-            ex.printStackTrace();
+        } catch (Exception n) {
+            Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setContentText("There are no cards to study!");
+            a.show();
         }
-    }
-
-    public void deleteSelectedDeck(){
-        Deck delDeck = dataModel.getCurrentDeck();
     }
 
     //public void settingsWindow(){}
 
-    public void initModel(){
+    public void initListView(){
 
         //Passes the dataModel Observable list to the ListView
-        deckList.setItems(dataModel.getDeckList());
+        deckList.setItems(model.getDeckList());
 
-        deckList.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) ->
-                dataModel.setCurrentDeck(newSelection));
+        deckList.getSelectionModel().selectedItemProperty().addListener((obs, oldDk, newDk) ->
+            model.setCurrentDeck(newDk)
+        );
 
-        dataModel.currentDeckProperty().addListener((obs, oldDeck, newDeck) -> {
+        model.currentDeckProperty().addListener((obs, oldDeck, newDeck) -> {
             if (newDeck == null) {
                 deckList.getSelectionModel().clearSelection();
             } else {
@@ -134,10 +131,10 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        initListView();
         createDeck.setOnAction(event -> createDeckWindow());
         addCards.setOnAction(event -> addCardsWindow());
         studyDeck.setOnAction(event -> studyDeckWindow());
-        deleteDeck.setOnAction(event -> deleteSelectedDeck());
-        //settings.setOnAction(event -> settingsWindow());
+        deleteDeck.setOnAction(event -> model.removeDeck());
     }
 }

@@ -32,7 +32,11 @@ public class AddCardsController implements Initializable {
 
     public AddCardsController(DataModel model){
         this.model = model;
-        currentDeck = this.model.getCurrentDeck();
+    }
+
+    private void clearText(){
+        frontField.clear();
+        backField.clear();
     }
 
     public void addCard(){
@@ -42,7 +46,10 @@ public class AddCardsController implements Initializable {
             cd.setDid(currentDeck.getDid());
             cd.setFront(frontField.getText());
             cd.setBack(backField.getText());
-
+            if(!cd.getFront().equals("") || !cd.getBack().equals("")){
+                model.addCard(cd);
+                clearText();
+            }
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -50,7 +57,9 @@ public class AddCardsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        currentDeck = model.getCurrentDeck();
         String lbl = "Deck: " + currentDeck.getName();
         addLabel.setText(lbl);
-        add.setOnAction(event -> addCard()); }
+        add.setOnAction(event -> addCard());
+    }
 }
