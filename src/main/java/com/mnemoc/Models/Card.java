@@ -2,6 +2,10 @@ package com.mnemoc.Models;
 
 import javafx.beans.property.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Card {
 
     private final LongProperty cid = new SimpleLongProperty();
@@ -52,14 +56,19 @@ public class Card {
 
     @Override
     public String toString() {
+        Date lrev = new Date(getCid());
+        Date nxt = new Date(getNextRev());
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        String last_rev = dateFormat.format(lrev);
+        String nxtrev = dateFormat.format(nxt);
         return String.format("Card {\n" +
                 "%d,\n" +
                 "%d, \n" +
                 "%s, \n" +
                 "%s, \n" +
-                "%d, \n" +
+                "%d, (" +last_rev+")\n" +
                 "%.2f, \n" +
-                "%d, \n" +
+                "%d, ("+nxtrev+")\n" +
                 "%d, \n" +
                 "%d };\n", getCid(),getDid(),getFront(),getBack(),getLastRev(),getENr(),getNextRev(),getIntrvl(),getReps());
     }

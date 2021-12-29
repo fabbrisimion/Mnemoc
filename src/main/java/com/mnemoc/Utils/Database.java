@@ -9,18 +9,35 @@ import java.sql.*;
 public class Database {
 
     private Connection con = null;
+    private static int n = 10;
 
     public Database(){
         initConnection();
         setup();
     }
+
     private void initConnection(){
         try {
+            Class.forName("org.sqlite.JDBC");
             String url = "jdbc:sqlite:collection.db";
             con = DriverManager.getConnection(url);
+        } catch (ClassNotFoundException c){
+            c.printStackTrace();
         } catch (SQLException s) {
             s.printStackTrace();
         }
+    }
+
+    private Connection getConnection(){
+        Connection connection = null;
+
+        try {
+            String url = "jdbc:sqlite:collection.db";
+            connection = DriverManager.getConnection(url);
+        } catch (SQLException s) {
+            s.printStackTrace();
+        }
+        return connection;
     }
 
     private void setup(){
@@ -65,13 +82,28 @@ public class Database {
         }
     }
 
-    public void getCards(Deck dk, ObservableList<Card> o){
-        String query = "SELECT * FROM Cards WHERE DID = " + dk.getDid();
-        try (PreparedStatement stmt = con.prepareStatement(query);ResultSet rs = stmt.executeQuery()){
+    public void countNewCardsToday(Deck dk){
+        int count = 0;
+        String query = "SELECT count(*) FROM Cards WHERE did = " + dk.getDid() +
+                " AND strftime('%Y-%m-%d', last_rev / 1000, 'unixepoch') == date('now') ORDER BY cid;";
+        try (Statement stmt = con.createStatement(); ResultSet rs = stmt.executeQuery(query)){
+            count =  rs.getInt(1);
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+
+        if(count>=n) n = 0;
+        else n = n-count;
+    }
+
+    public void getNewCards(Deck dk, ObservableList<Card> o){
+        String query = "SELECT * FROM Cards WHERE DID = " + dk.getDid() +
+                " AND last_rev IS NULL ORDER BY cid ASC LIMIT " + n + ";";
+        try (Statement stmt = con.createStatement();ResultSet rs = stmt.executeQuery(query)){
             while (rs.next()){
                 Card cd = new Card();
-                cd.setDid(rs.getLong("CID"));
-                cd.setCid(rs.getLong("DID"));
+                cd.setDid(rs.getLong("DID"));
+                cd.setCid(rs.getLong("CID"));
                 cd.setFront(rs.getString("FRONT"));
                 cd.setBack(rs.getString("BACK"));
                 cd.setLastRev(rs.getLong("LAST_REV"));
@@ -83,6 +115,34 @@ public class Database {
         } catch (SQLException se) {
             se.printStackTrace();
         }
+    }
+
+    public void getScheduledCards(Deck dk, ObservableList<Card> o){
+        String query = "SELECT * FROM Cards WHERE DID = " + dk.getDid() +
+                " AND strftime('%Y-%m-%d', next_rev / 1000, 'unixepoch') == date('now');";
+        try (Statement stmt = con.createStatement();ResultSet rs = stmt.executeQuery(query)){
+            while (rs.next()){
+                Card cd = new Card();
+                cd.setDid(rs.getLong("DID"));
+                cd.setCid(rs.getLong("CID"));
+                cd.setFront(rs.getString("FRONT"));
+                cd.setBack(rs.getString("BACK"));
+                cd.setLastRev(rs.getLong("LAST_REV"));
+                cd.setENr(rs.getFloat("E_FACTOR"));
+                cd.setReps(rs.getLong("REPS"));
+                cd.setIntrvl(rs.getLong("INTRVL"));
+                o.add(cd);
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+
+    }
+
+    public void getCards(Deck dk, ObservableList<Card> o){
+        countNewCardsToday(dk);
+        getNewCards(dk, o);
+        getScheduledCards(dk, o);
     }
 
     public void insertDeck(Deck dk) {
@@ -111,13 +171,14 @@ public class Database {
 
     //The card passed as argument will be already scheduled
     public void updateCard(Card cd){
-        String query = "UPDATE Cards SET e_factor = ?, next_rev = ?, last_rev = ?, intrvl = ? WHERE cid = ? ";
+        String query = "UPDATE Cards SET e_factor=?, next_rev=?, last_rev=?, reps=?, intrvl=? WHERE cid=? ;";
         try (PreparedStatement stmt = con.prepareStatement(query)){
-            stmt.setFloat(1, cd.getENr());
-            stmt.setLong(2,cd.getNextRev());
-            stmt.setLong(3,cd.getLastRev());
-            stmt.setLong(4,cd.getIntrvl());
-            stmt.setLong(5, cd.getCid());
+            stmt.setFloat(1,cd.getENr());
+            stmt.setLong(2, cd.getNextRev());
+            stmt.setLong(3, cd.getLastRev());
+            stmt.setLong(4, cd.getReps());
+            stmt.setLong(5, cd.getIntrvl());
+            stmt.setLong(6, cd.getCid());
             stmt.executeUpdate();
         } catch (SQLException se) {
             se.printStackTrace();
@@ -143,11 +204,11 @@ public class Database {
         }
     }
 
-    public void closeConnection(){
-            try {
-                con.close();
-            } catch (SQLException se){
-                se.printStackTrace();
-            }
+    private void closeConnection(Connection connection){
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

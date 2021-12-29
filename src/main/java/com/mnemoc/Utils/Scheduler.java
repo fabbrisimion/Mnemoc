@@ -2,6 +2,9 @@ package com.mnemoc.Utils;
 
 import com.mnemoc.Models.Card;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class Scheduler {
 
     private static final long millisInDays = 60 * 60 * 24 * 1000;
@@ -46,11 +49,14 @@ public class Scheduler {
         long now = System.currentTimeMillis();
         long next_rev = now + millisInDays * interval;
 
+        easiness = BigDecimal.valueOf(easiness).setScale(2, RoundingMode.HALF_UP).floatValue();
+
         cd.setENr(easiness);
         cd.setIntrvl(interval);
         cd.setReps(repetitions);
         cd.setNextRev(next_rev);
     }
+
 
     private static int typeToQuality(String type){
         if(type.equals("Easy")) return 5;
